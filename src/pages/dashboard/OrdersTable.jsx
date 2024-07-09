@@ -18,8 +18,6 @@ import Dot from 'components/@extended/Dot';
 import { useState, useEffect } from 'react';
 import supabase from 'service/supabase';
 
-
-
 // function descendingComparator(a, b, orderBy) {
 //   if (b[orderBy] < a[orderBy]) {
 //     return -1;
@@ -48,34 +46,40 @@ import supabase from 'service/supabase';
 
 const headCells = [
   {
-    id: 'fromAirport',
+    id: 'From Airport Code',
     align: 'left',
     disablePadding: false,
-    label: 'From Airport'
+    label: 'from_airport_code'
   },
   {
-    id: 'toAirport',
+    id: 'to_airport_code',
     align: 'left',
     disablePadding: true,
     label: 'To Airport'
   },
   {
-    id: 'booking_date',
+    id: 'departure_timestamp',
     align: 'left',
     disablePadding: true,
-    label: 'Booking Date'
+    label: 'Departure date'
   },
   {
-    id: 'ticketAmount',
+    id: 'no_of_pax',
     align: 'right',
     disablePadding: false,
-    label: 'Ticket Amount'
+    label: 'Total Pax'
   },
   {
-    id: 'charge_amount',
+    id: 'total_fare_amount',
     align: 'right',
     disablePadding: false,
     label: 'Assurance Amount'
+  },
+  {
+    id: 'quote_amount',
+    align: 'right',
+    disablePadding: false,
+    label: 'Quote Amount'
   },
   {
     id: 'status',
@@ -84,11 +88,11 @@ const headCells = [
     label: 'Status'
   },
   {
-    id: 'policy_no',
+    id: 'ticket_type',
     align: 'left',
     disablePadding: false,
-    label: 'Policy No'
-  },
+    label: 'Ticket Type'
+  }
 ];
 
 // ==============================|| ORDER TABLE - HEADER ||============================== //
@@ -117,15 +121,15 @@ function OrderStatus({ status }) {
   let title;
 
   switch (status) {
-    case "POLICY":
+    case 'SALE':
       color = 'warning';
       title = 'POLICY';
       break;
-    case "SETTLED":
+    case 'CLAIM':
       color = 'success';
       title = 'SETTLED';
       break;
-    case "Underprocess":
+    case 'Underprocess':
       color = 'error';
       title = 'Underprocess';
       break;
@@ -151,7 +155,7 @@ export default function OrderTable() {
 
   const getAllRequest = async () => {
     try {
-      const { data, error } = await supabase.from('refundpolicy').select('*').limit(10).order("created_at",{ascending:true});
+      const { data, error } = await supabase.from('REFUNDABLE').select('*').limit(10).order('created_at', { ascending: true });
       if (error) {
         throw error;
       }
@@ -185,31 +189,26 @@ export default function OrderTable() {
               const labelId = `enhanced-table-checkbox-${index}`;
 
               return (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  tabIndex={-1}
-                  key={row.id}
-                >
+                <TableRow hover role="checkbox" sx={{ '&:last-child td, &:last-child th': { border: 0 } }} tabIndex={-1} key={row.id}>
                   <TableCell component="th" id={labelId} scope="row">
-                     {row.fromAirport}
+                    {row.from_airport_code}
                   </TableCell>
-                  <TableCell>{row.toAirport}</TableCell>
-                  <TableCell>{row.booking_date}</TableCell>
-             
+                  <TableCell>{row.to_airport_code}</TableCell>
+                  <TableCell>{row.departure_timestamp}</TableCell>
+
+                  <TableCell align="right">{row.no_of_pax}</TableCell>
+
                   <TableCell align="right">
-                    <NumericFormat value={row.ticketAmount} displayType="text" thousandSeparator prefix="£ " />
+                    <NumericFormat value={row.total_fare_amount} displayType="text" thousandSeparator prefix="£ " />
                   </TableCell>
                   <TableCell align="right">
-                    <NumericFormat value={row.charge_amount} displayType="text" thousandSeparator prefix="£ " />
+                    <NumericFormat value={row.quote_amount} displayType="text" thousandSeparator prefix="£ " />
                   </TableCell>
-                 
+
                   <TableCell align="left">
                     <OrderStatus status={row.status} />
                   </TableCell>
-                  <TableCell>{row.policy_no ?? "Not Taken"}</TableCell>
-
+                  <TableCell>{row.ticket_type}</TableCell>
                 </TableRow>
               );
             })}
