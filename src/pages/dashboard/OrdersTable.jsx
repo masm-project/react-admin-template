@@ -46,16 +46,16 @@ import supabase from 'service/supabase';
 
 const headCells = [
   {
-    id: 'From Airport Code',
+    id: ' from_airport_code',
     align: 'left',
     disablePadding: false,
-    label: 'from_airport_code'
+    label: 'From Airport Code'
   },
   {
     id: 'to_airport_code',
     align: 'left',
     disablePadding: true,
-    label: 'To Airport'
+    label: 'To Airport Code'
   },
   {
     id: 'departure_timestamp',
@@ -73,7 +73,7 @@ const headCells = [
     id: 'total_fare_amount',
     align: 'right',
     disablePadding: false,
-    label: 'Assurance Amount'
+    label: 'Quote Amount'
   },
   {
     id: 'quote_amount',
@@ -123,7 +123,7 @@ function OrderStatus({ status }) {
   switch (status) {
     case 'SALE':
       color = 'warning';
-      title = 'POLICY';
+      title = 'SALE';
       break;
     case 'CLAIM':
       color = 'success';
@@ -135,7 +135,7 @@ function OrderStatus({ status }) {
       break;
     default:
       color = 'primary';
-      title = 'OFFER';
+      title = 'REQUEST';
   }
 
   return (
@@ -159,6 +159,8 @@ export default function OrderTable() {
       if (error) {
         throw error;
       }
+
+      console.log('data', data);
 
       setAllRequest(data);
     } catch (error) {
@@ -194,7 +196,7 @@ export default function OrderTable() {
                     {row.from_airport_code}
                   </TableCell>
                   <TableCell>{row.to_airport_code}</TableCell>
-                  <TableCell>{row.departure_timestamp}</TableCell>
+                  <TableCell>{row.departure_timestamp.split('T')[0]} </TableCell>
 
                   <TableCell align="right">{row.no_of_pax}</TableCell>
 
