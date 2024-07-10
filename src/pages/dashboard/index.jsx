@@ -61,7 +61,7 @@ export default function DashboardDefault() {
 
   const getAllRequest = async () => {
     try {
-      const { data, error } = await supabase.from('REFUNDABLE').select('id', { count: 'exact' });
+      const { data, error } = await supabase.from('REFUNDABLE').select('id,quote_amount,total_fare_amount', { count: 'exact' });
       if (error) {
         throw error;
       }
@@ -73,7 +73,7 @@ export default function DashboardDefault() {
   };
   const getSettledRes = async () => {
     try {
-      const { data, error } = await supabase.from('REFUNDABLE').select('quote_amount', { count: 'exact' }).eq('status', 'CLAIM');
+      const { data, error } = await supabase.from('REFUNDABLE').select('quote_amount', { count: 'exact' }).eq('status', 'SALE');
       if (error) {
         throw error;
       }
@@ -110,6 +110,8 @@ export default function DashboardDefault() {
       alert(error.message);
     }
   };
+
+  console.log(settledReq.length + claimReq.length, claimReq.length);
   // const test = async () => {
   //   try {
 
@@ -168,12 +170,11 @@ export default function DashboardDefault() {
       <Grid item xs={12} sm={6} md={4} lg={3}>
         <AnalyticEcommerce
           title="Profit"
-          count={` ${
-            (
-              settledReq?.reduce((sum, record) => sum + record.quote_amount, 0) +
-              claimReq?.reduce((sum, record) => sum + record.quote_amount, 0)
-            ).toFixed(2) - claimReq?.reduce((sum, record) => sum + record.total_fare_amount, 0).toFixed(2)
-          }`}
+          count={` ${(
+            settledReq?.reduce((sum, record) => sum + record.quote_amount, 0) +
+            claimReq?.reduce((sum, record) => sum + record.quote_amount, 0) -
+            claimReq?.reduce((sum, record) => sum + record.total_fare_amount, 0)
+          ).toFixed(2)}`}
           percentage={27.4}
           isLoss
           color="warning"
@@ -184,7 +185,7 @@ export default function DashboardDefault() {
       <Grid item xs={12} sm={6} md={4} lg={3}>
         <AnalyticEcommerce
           title="Claim Percent"
-          count={((claimReq?.length / claimReq?.length) * 100).toFixed(2) + ' %'}
+          count={((claimReq.length / Number(settledReq.length + claimReq.length)) * 100).toFixed(2) + ' %'}
           percentage={27.4}
           isLoss
           color="warning"
