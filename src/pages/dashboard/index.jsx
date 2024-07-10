@@ -184,7 +184,7 @@ export default function DashboardDefault() {
       <Grid item xs={12} sm={6} md={4} lg={3}>
         <AnalyticEcommerce
           title="Claim Percent"
-          count={((claimReq?.length / (settledReq?.length + claimReq?.length)) * 100).toFixed(2) + ' %'}
+          count={((claimReq?.length / claimReq?.length) * 100).toFixed(2) + ' %'}
           percentage={27.4}
           isLoss
           color="warning"
