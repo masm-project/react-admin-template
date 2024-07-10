@@ -127,7 +127,7 @@ function OrderStatus({ status }) {
       break;
     case 'CLAIM':
       color = 'success';
-      title = 'SETTLED';
+      title = 'CLAIM';
       break;
     case 'Underprocess':
       color = 'error';
